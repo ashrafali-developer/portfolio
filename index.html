@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ashraf Ali – Front‑end web developer crafting trustworthy, hand‑coded websites for businesses. Specialising in HTML, CSS, and JavaScript.">
+    <meta name="theme-color" content="#0d1f2b">
+    <title>Ashraf Ali | Front‑End Web Developer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="LOGO.png">
+    
+    <style>
+        /* ══════════════════════════════════════
+           TOKENS
+        ══════════════════════════════════════ */
+        :root {
+            --deep:          #0d1f2b;
+            --accent:        #0f7b9c;
+            --accent-hover:  #0b5d78;
+            --accent-glow:   rgba(15,123,156,0.18);
+            --bg:            #f7f9fc;
+            --surface:       #e1edf2;
+            --border:        #b6d4e3;
+            --text:          #0d1f2b;
+            --text-muted:    #2a4250;
+            --white:         #ffffff;
+            --shadow-sm:     0 1px 4px rgba(13,31,43,0.05);
+            --shadow-md:     0 8px 24px rgba(13,31,43,0.08);
+            --shadow-lg:     0 18px 40px rgba(13,31,43,0.12);
+            --radius:        14px;
+            --radius-lg:     20px;
+            --ease-out:      cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior:smooth; scroll-padding-top:90px; }
+        body {
+            font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+            background:var(--bg); color:var(--text);
+            line-height:1.65; font-weight:400;
+            -webkit-font-smoothing:antialiased;
+            overflow-x:hidden;
+        }
+        h1,h2,h3,h4 { font-family:'Playfair Display',serif; font-weight:700; letter-spacing:-0.3px; color:var(--deep); }
+        a { color:var(--accent); text-decoration:none; transition:color .2s; }
+        a:hover { color:var(--accent-hover); }
+        .container { max-width:1120px; margin:0 auto; padding:0 1.5rem; }
+
+        /* ══════════════════════════════════════
+           SCROLL PROGRESS
+        ══════════════════════════════════════ */
+        #scroll-progress {
+            position:fixed; top:0; left:0; height:3px; width:0%;
+            background:linear-gradient(90deg, var(--accent), #14b8a6);
+            z-index:2000;
+            transition:width .08s linear;
+            box-shadow:0 0 8px rgba(15,123,156,0.6);
+        }
+
+        /* ══════════════════════════════════════
+           NAV
+        ══════════════════════════════════════ */
+        .navbar {
+            position:fixed; top:0; left:0; width:100%;
+            background:rgba(255,255,255,0.94);
+            backdrop-filter:blur(18px);
+            z-index:1000;
+            border-bottom:1px solid var(--border);
+            height:78px; display:flex; align-items:center;
+            transition:box-shadow .4s var(--ease-out), background .4s var(--ease-out);
+        }
+        .navbar.scrolled {
+            box-shadow:0 4px 24px rgba(13,31,43,0.1);
+            background:rgba(255,255,255,0.98);
+        }
+        .nav-container { display:flex; align-items:center; justify-content:space-between; width:100%; }
+        .logo {
+            font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; color:var(--deep);
+            transition:transform .3s var(--ease-spring);
+        }
+        .logo:hover { transform:scale(1.04); }
+        .logo span { color:var(--accent); }
+        .nav-links { display:flex; list-style:none; gap:2.2rem; align-items:center; }
+        .nav-links a {
+            color:var(--text-muted); font-weight:500; font-size:.95rem;
+            padding:.5rem 0; position:relative;
+            transition:color .25s var(--ease-out);
+        }
+        .nav-links a::after {
+            content:''; position:absolute; bottom:0; left:0;
+            width:0; height:2px; background:var(--accent);
+            border-radius:2px; transition:width .3s var(--ease-out);
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width:100%; }
+        .nav-links a:hover, .nav-links a.active { color:var(--accent); }
+        .nav-cta {
+            background:var(--accent); color:#fff !important;
+            padding:.4rem 1.3rem !important; font-size:.85rem !important;
+            border-radius:50px; font-weight:600;
+            transition:all .35s var(--ease-spring) !important;
+            display:inline-block; box-shadow:0 4px 12px rgba(15,123,156,0.2);
+        }
+        .nav-cta:hover { background:var(--accent-hover) !important; transform:translateY(-3px) !important; box-shadow:0 8px 22px rgba(15,123,156,0.45) !important; }
+        .nav-cta::after { display:none !important; }
+        .menu-toggle { display:none; background:none; border:none; flex-direction:column; gap:6px; cursor:pointer; padding:8px; }
+        .menu-toggle span { width:26px; height:2.5px; background:var(--deep); border-radius:2px; transition:.35s var(--ease-out); display:block; }
+        .menu-toggle.open span:nth-child(1) { transform:translateY(8.5px) rotate(45deg); }
+        .menu-toggle.open span:nth-child(2) { opacity:0; transform:scaleX(0); }
+        .menu-toggle.open span:nth-child(3) { transform:translateY(-8.5px) rotate(-45deg); }
+
+        /* HERO */
+        .hero {
+            padding:10rem 0 5rem;
+            background:linear-gradient(135deg,#0b2a35 0%,#0d1f2b 100%);
+            color:var(--white); text-align:center;
+            position:relative; overflow:hidden;
+        }
+        .hero::before {
+            content:'';
+            position:absolute; inset:0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 40%, rgba(15,123,156,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 80% at 80% 60%, rgba(20,184,166,0.08) 0%, transparent 60%);
+            animation:heroBgShift 10s ease-in-out infinite alternate;
+        }
+        @keyframes heroBgShift {
+            0%   { transform:scale(1)   translateX(0)   translateY(0); }
+            100% { transform:scale(1.1) translateX(-3%) translateY(-2%); }
+        }
+        .hero-particle {
+            position:absolute; border-radius:50%;
+            background:rgba(15,123,156,0.15);
+            animation:particleFloat linear infinite;
+            pointer-events:none;
+        }
+        @keyframes particleFloat {
+            0%   { transform:translateY(100vh) scale(0); opacity:0; }
+            10%  { opacity:1; }
+            90%  { opacity:0.6; }
+            100% { transform:translateY(-20vh) scale(1); opacity:0; }
+        }
+
+        .hero .container { position:relative; z-index:1; }
+        .hero-text { max-width:800px; margin:0 auto; }
+
+        .hero-badge {
+            display:inline-flex; align-items:center; justify-content:center;
+            background:rgba(15,123,156,0.2); color:var(--accent);
+            padding:.35rem 1.2rem; border-radius:50px;
+            font-size:.8rem; font-weight:600; letter-spacing:.5px;
+            margin-bottom:1.6rem;
+            animation:heroFadeDown .8s var(--ease-out) .1s both;
+        }
+        .hero-badge .dot {
+            width:8px; height:8px; background:#14b8a6; border-radius:50%; margin-right:8px;
+            animation:pulseDot 2s infinite;
+        }
+        @keyframes pulseDot {
+            0%,100% { box-shadow:0 0 0 0 rgba(20,184,166,0.7); }
+            50%      { box-shadow:0 0 0 10px rgba(20,184,166,0); }
+        }
+
+        .hero-text h1 {
+            font-size:clamp(2.4rem,6vw,3.8rem); font-weight:800;
+            line-height:1.15; color:#fff; margin-bottom:1rem;
+            animation:heroFadeUp .9s var(--ease-out) .25s both;
+        }
+        .hero-text .description {
+            font-size:1.15rem; color:rgba(255,255,255,0.75);
+            max-width:650px; margin:0 auto 2.2rem; line-height:1.7;
+            animation:heroFadeUp .9s var(--ease-out) .4s both;
+        }
+        .hero-buttons {
+            display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;
+            animation:heroFadeUp .9s var(--ease-out) .55s both;
+        }
+
+        @keyframes heroFadeUp   { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes heroFadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+
+        .btn-primary {
+            background:var(--accent); color:#fff;
+            padding:.9rem 2.4rem; border-radius:50px;
+            font-weight:600; font-size:1rem; text-decoration:none;
+            display:inline-block;
+            transition:transform .35s var(--ease-spring), box-shadow .35s var(--ease-out), background .2s;
+            box-shadow:0 6px 18px rgba(15,123,156,0.3);
+            position:relative; overflow:hidden; z-index:1;
+        }
+        .btn-primary:hover { background:var(--accent-hover); transform:translateY(-4px) scale(1.03); box-shadow:0 14px 30px rgba(15,123,156,0.45); }
+        .btn-primary::after {
+            content:''; position:absolute; top:50%; left:50%;
+            width:0; height:0; background:rgba(255,255,255,0.22);
+            border-radius:50%; transform:translate(-50%,-50%);
+            transition:width .55s var(--ease-out), height .55s var(--ease-out), opacity .55s;
+        }
+        .btn-primary:hover::after { width:320px; height:320px; opacity:0; }
+
+        /* TRUST BAR */
+        .trust-bar {
+            background:var(--surface);
+            padding:1.5rem 2rem;
+            display:flex; align-items:center; justify-content:center;
+            flex-wrap:wrap; gap:2.5rem;
+            border-bottom:1px solid var(--border);
+            overflow:hidden;
+        }
+        .trust-item {
+            color:var(--text-muted); font-size:.9rem; font-weight:500;
+            display:flex; align-items:center; gap:.5rem;
+            animation:trustSlideIn .6s var(--ease-out) both;
+        }
+        .trust-item:nth-child(1){animation-delay:.05s}
+        .trust-item:nth-child(2){animation-delay:.12s}
+        .trust-item:nth-child(3){animation-delay:.19s}
+        .trust-item:nth-child(4){animation-delay:.26s}
+        .trust-item:nth-child(5){animation-delay:.33s}
+        @keyframes trustSlideIn { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+        .trust-item strong { color:var(--deep); font-weight:600; }
+        .trust-item .icon {
+            display:inline-flex; align-items:center; justify-content:center;
+            width:1.5em; height:1.5em; font-size:1rem;
+        }
+        .trust-item .icon svg {
+            width:100%; height:100%;
+            fill:none; stroke:var(--accent); stroke-width:2;
+            stroke-linecap:round; stroke-linejoin:round;
+        }
+
+        /* SECTIONS */
+        .section { padding:5rem 0; }
+        .section-bg { background:var(--surface); }
+
+        .section-header { text-align:center; margin-bottom:3.5rem; }
+        .section-label {
+            text-transform:uppercase; letter-spacing:3px;
+            font-size:.8rem; font-weight:700; color:var(--accent); margin-bottom:.5rem;
+        }
+        .section-title { font-size:2.6rem; font-weight:700; color:var(--deep); margin-bottom:1rem; }
+        .section-title em { font-style:italic; color:var(--accent); }
+        .section-line {
+            width:70px; height:3px; background:var(--accent);
+            margin:0 auto; border-radius:3px;
+            transform:scaleX(0); transition:transform .6s var(--ease-out);
+        }
+        .section-line.line-in { transform:scaleX(1); }
+
+        /* REVEAL SYSTEM */
+        .reveal {
+            opacity:0;
+            transform:translateY(36px);
+            transition:opacity .7s var(--ease-out), transform .7s var(--ease-out);
+            will-change:opacity, transform;
+        }
+        .reveal.visible { opacity:1; transform:translateY(0); }
+
+        .reveal-left  { transform:translateX(-36px) translateY(0); }
+        .reveal-right { transform:translateX(36px)  translateY(0); }
+        .reveal-left.visible, .reveal-right.visible { transform:translateX(0) translateY(0); }
+
+        .reveal-scale { transform:scale(0.9) translateY(20px); }
+        .reveal-scale.visible { transform:scale(1) translateY(0); }
+
+        .stagger-1 { transition-delay:.07s }
+        .stagger-2 { transition-delay:.14s }
+        .stagger-3 { transition-delay:.21s }
+        .stagger-4 { transition-delay:.28s }
+        .stagger-5 { transition-delay:.35s }
+        .stagger-6 { transition-delay:.42s }
+
+        /* ABOUT */
+        .about-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; }
+        .about-photo-placeholder {
+            width:100%; aspect-ratio:4/5;
+            background:var(--white); border:1px solid var(--border);
+            border-radius:var(--radius);
+            display:flex; align-items:center; justify-content:center;
+            color:var(--text-muted); font-size:.9rem;
+            background-size:cover; background-position:center;
+            transition:border-color .3s, box-shadow .3s, transform .4s var(--ease-spring);
+            animation:softFloat 5s ease-in-out infinite;
+        }
+        .about-photo-placeholder:hover {
+            border-color:var(--accent);
+            box-shadow:0 0 0 4px rgba(15,123,156,0.25), 0 20px 30px rgba(13,31,43,0.15);
+            transform:translateY(-4px);
+        }
+        @keyframes softFloat {
+            0%, 100% { transform:translateY(0); }
+            50%      { transform:translateY(-8px); }
+        }
+
+        .about-text p { color:var(--text-muted); margin-bottom:1.2rem; font-size:1rem; }
+        .check-list { display:flex; flex-direction:column; gap:.7rem; margin-top:1.5rem; }
+        .check-item {
+            display:flex; align-items:flex-start; gap:.7rem;
+            color:var(--text); font-weight:500; font-size:.95rem;
+            opacity:0; transform:translateX(-16px);
+            transition:opacity .5s var(--ease-out), transform .5s var(--ease-out);
+        }
+        .check-item.item-in { opacity:1; transform:translateX(0); }
+        .check-item::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; }
+
+        /* CARDS */
+        .project-card, .step, .service-card, .pricing-card {
+            background:var(--white); border:1px solid var(--border);
+            border-radius:var(--radius);
+            transition:
+                transform .4s var(--ease-spring),
+                box-shadow .4s var(--ease-out),
+                border-color .3s;
+            will-change:transform, box-shadow;
+        }
+        .project-card:hover, .step:hover, .service-card:hover, .pricing-card:hover {
+            transform:translateY(-8px) scale(1.01);
+            box-shadow:0 24px 48px rgba(13,31,43,0.13), 0 0 0 2px rgba(15,123,156,0.22);
+            border-color:var(--accent);
+        }
+
+        /* PROJECTS */
+        .projects-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+        .project-card { overflow:hidden; position:relative; }
+        .live-badge {
+            position:absolute; top:12px; right:12px;
+            background:var(--accent); color:#fff;
+            font-size:.65rem; font-weight:700; padding:.2rem .7rem;
+            border-radius:4px; letter-spacing:.5px; z-index:2;
+            animation:badgePop .6s var(--ease-spring) 1s both;
+        }
+        @keyframes badgePop { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
+        .project-img { width:100%; height:auto; display:block; border-bottom:1px solid var(--border); transition:transform .5s var(--ease-out); }
+        .project-card:hover .project-img { transform:scale(1.04); }
+        .project-body { padding:1.2rem; }
+        .project-body h3 { font-size:1.15rem; }
+        .project-body p { color:var(--text-muted); font-size:.82rem; margin-bottom:.6rem; }
+        .project-tags { display:flex; flex-wrap:wrap; gap:.3rem; margin-bottom:.8rem; }
+        .project-tags span {
+            background:var(--surface); color:var(--deep);
+            padding:.2rem .6rem; border-radius:12px; font-size:.68rem; font-weight:500;
+            transition:background .2s, color .2s;
+        }
+        .project-card:hover .project-tags span { background:var(--accent-glow); color:var(--accent); }
+        .project-link { font-weight:600; color:var(--accent); font-size:.85rem; display:inline-flex; align-items:center; gap:4px; transition:gap .25s var(--ease-out), color .2s; }
+        .project-link:hover { gap:10px; color:var(--deep); }
+        .cta-card { background:var(--deep); border-color:rgba(255,255,255,0.07); color:#fff; padding:2rem; }
+        .cta-card .project-body h3 { color:#fff; }
+        .cta-card .project-body p { color:rgba(255,255,255,0.65); }
+
+        /* PROCESS */
+        .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; position:relative; }
+        .steps::before {
+            content:''; position:absolute;
+            top:2.8rem; left:calc(16.66% + 1rem); right:calc(16.66% + 1rem);
+            height:1px; background:linear-gradient(90deg, transparent, var(--border), var(--border), transparent);
+            z-index:0;
+        }
+        .step { padding:2rem 1.5rem; text-align:center; position:relative; z-index:1; }
+        .step-num {
+            font-family:'Playfair Display',serif; font-size:2.8rem; font-weight:700;
+            color:var(--accent); opacity:.25; margin-bottom:.5rem;
+            transition:opacity .35s, transform .35s var(--ease-spring);
+        }
+        .step:hover .step-num { opacity:.7; transform:scale(1.1); }
+        .step-title { font-weight:700; font-size:1.2rem; color:var(--deep); margin-bottom:.5rem; }
+        .step-desc { font-size:.9rem; color:var(--text-muted); }
+
+        /* SERVICES */
+        .services-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; max-width:1000px; margin:0 auto; }
+        .service-card { padding:2.5rem 1.8rem; position:relative; overflow:hidden; }
+        .service-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:3px;
+            background:linear-gradient(90deg,var(--accent),#14b8a6);
+            transform:scaleX(0); transform-origin:left;
+            transition:transform .4s var(--ease-out);
+        }
+        .service-card:hover::before { transform:scaleX(1); }
+        .service-card h3 { font-size:1.25rem; margin-bottom:.5rem; }
+        .service-card .service-subtitle { font-size:.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:.8rem; font-weight:600; }
+        .service-card p { color:var(--text-muted); font-size:.95rem; line-height:1.6; }
+
+        /* PRICING */
+        .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; max-width:1100px; margin:0 auto; }
+        .pricing-card { padding:2.5rem 1.8rem; text-align:center; display:flex; flex-direction:column; }
+        .popular-badge {
+            position:absolute; top:-13px; right:20px;
+            background:var(--accent); color:#fff; font-size:.7rem; font-weight:700;
+            padding:.3rem 1.2rem; border-radius:20px;
+            letter-spacing:.5px; box-shadow:0 4px 10px rgba(15,123,156,0.3);
+            animation:badgePop .6s var(--ease-spring) 1.2s both;
+        }
+        .pricing-name { font-size:1.4rem; font-weight:700; color:var(--deep); margin-bottom:.3rem; }
+        .pricing-desc { font-size:.9rem; color:var(--text-muted); margin-bottom:1.8rem; flex:1; line-height:1.5; }
+        .pricing-price {
+            font-family:'Inter',sans-serif; font-size:3rem; font-weight:700;
+            color:var(--accent); margin-bottom:.2rem; letter-spacing:-1px;
+            transition:transform .35s var(--ease-spring);
+        }
+        .pricing-card:hover .pricing-price { transform:scale(1.08); }
+        .pricing-label { font-size:.85rem; color:var(--text-muted); margin-bottom:1.5rem; font-weight:500; }
+        .pricing-features { list-style:none; text-align:left; margin-bottom:2rem; flex:1; }
+        .pricing-features li {
+            padding:.5rem 0; border-bottom:1px solid var(--border);
+            color:var(--text-muted); font-size:.9rem;
+            display:flex; align-items:center; gap:.6rem;
+            transition:color .2s, transform .25s var(--ease-out);
+        }
+        .pricing-card:hover .pricing-features li { color:var(--text); }
+        .pricing-features li::before { content:'✔'; color:var(--accent); font-weight:700; }
+        .btn-pricing {
+            display:inline-block; background:var(--accent); color:#fff;
+            padding:.9rem 2rem; border-radius:50px; font-weight:600;
+            text-decoration:none;
+            transition:transform .35s var(--ease-spring), box-shadow .35s var(--ease-out), background .2s;
+            box-shadow:0 6px 18px rgba(15,123,156,0.3);
+            position:relative; overflow:hidden; z-index:1;
+        }
+        .btn-pricing:hover { background:var(--accent-hover); transform:translateY(-4px) scale(1.03); box-shadow:0 12px 28px rgba(15,123,156,0.45); }
+        .btn-pricing::after {
+            content:''; position:absolute; top:50%; left:50%;
+            width:0; height:0; background:rgba(255,255,255,0.22);
+            border-radius:50%; transform:translate(-50%,-50%);
+            transition:width .55s var(--ease-out), height .55s var(--ease-out), opacity .5s;
+        }
+        .btn-pricing:hover::after { width:320px; height:320px; opacity:0; }
+        .pricing-note {
+            text-align:center; color:var(--text-muted); font-size:.9rem; margin-top:2.5rem;
+            max-width:700px; margin-left:auto; margin-right:auto;
+            padding:1.5rem; background:rgba(15,123,156,0.05); border-radius:var(--radius); font-weight:500;
+        }
+
+        /* QUOTE */
+        .quote-section { text-align:center; padding:3rem 1.5rem 1rem; }
+        .quote-text {
+            font-size:1.25rem; font-style:italic; color:var(--deep);
+            max-width:700px; margin:0 auto 1rem; line-height:1.6;
+            position:relative; display:inline-block;
+        }
+        .quote-text::before {
+            content:'"';
+            position:absolute; top:-.8rem; left:-1.5rem;
+            font-family:'Playfair Display',serif; font-size:4rem;
+            color:var(--accent); opacity:.15; line-height:1;
+            pointer-events:none;
+        }
+        .quote-attribution { font-size:.9rem; color:var(--text-muted); font-weight:500; }
+
+        /* FAQ */
+        .faq-accordion { max-width:800px; margin:0 auto; }
+        .faq-item {
+            background:var(--white); border:1px solid var(--border);
+            border-radius:var(--radius); margin-bottom:1rem; overflow:hidden;
+            transition:box-shadow .3s var(--ease-out), border-color .3s;
+        }
+        .faq-item:hover { box-shadow:var(--shadow-md); border-color:var(--accent); }
+        .faq-item.open { border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-glow); }
+        .faq-question {
+            padding:1.2rem 1.5rem; font-weight:600; color:var(--deep);
+            cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+            background:transparent; border:none; width:100%; text-align:left;
+            font-family:'Inter',sans-serif; font-size:1rem;
+            transition:color .25s;
+        }
+        .faq-question:hover { color:var(--accent); }
+        .faq-answer {
+            max-height:0; overflow:hidden;
+            transition:max-height .45s var(--ease-out), padding .35s var(--ease-out), opacity .35s;
+            padding:0 1.5rem; color:var(--text-muted); font-size:.9rem;
+            opacity:0;
+        }
+        .faq-item.open .faq-answer { max-height:200px; padding:.2rem 1.5rem 1.2rem; opacity:1; }
+        .faq-item.open .faq-question { color:var(--accent); }
+        .faq-icon { font-size:1.2rem; transition:transform .35s var(--ease-spring); display:inline-block; }
+        .faq-item.open .faq-icon { transform:rotate(45deg); }
+
+        /* CONTACT */
+        .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:start; }
+        .contact-info h3 { font-size:1.8rem; margin-bottom:.8rem; }
+        .contact-info p { color:var(--text-muted); margin-bottom:1.5rem; }
+        .c-link {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:.8rem 0; border-bottom:1px solid var(--border); text-decoration:none;
+            transition:padding-left .25s var(--ease-out);
+        }
+        .c-link:last-child { border-bottom:none; }
+        .c-link:hover { padding-left:.6rem; }
+        .c-link-inner { display:flex; flex-direction:column; }
+        .c-label { font-size:.7rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-muted); }
+        .c-val {
+            font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:600; color:var(--deep);
+            transition:color .2s;
+        }
+        .c-link:hover .c-val { color:var(--accent); }
+
+        .contact-form {
+            background:var(--white); padding:2rem;
+            border-radius:var(--radius-lg);
+            box-shadow:var(--shadow-md);
+            border:1px solid var(--border);
+            border-top:4px solid var(--accent);
+            transition:box-shadow .4s var(--ease-out);
+        }
+        .contact-form:hover { box-shadow:var(--shadow-lg); }
+        .form-group { margin-bottom:1rem; }
+        .form-group label { font-weight:600; color:var(--deep); font-size:.9rem; display:block; margin-bottom:.3rem; }
+        .contact-form input, .contact-form textarea {
+            width:100%; padding:.8rem 1rem; border:1px solid var(--border);
+            border-radius:10px; font-family:'Inter',sans-serif; font-size:.95rem;
+            background:var(--bg);
+            transition:border-color .25s, box-shadow .25s, transform .2s;
+        }
+        .contact-form input:focus, .contact-form textarea:focus {
+            outline:none; border-color:var(--accent);
+            box-shadow:0 0 0 3px rgba(15,123,156,0.12);
+            transform:translateY(-1px);
+        }
+        .contact-form textarea { min-height:120px; resize:vertical; }
+        .contact-form button {
+            width:100%; background:var(--accent); color:#fff; border:none;
+            padding:.9rem; border-radius:50px; font-weight:700; font-size:1rem;
+            cursor:pointer;
+            transition:transform .35s var(--ease-spring), box-shadow .35s var(--ease-out), background .2s;
+            box-shadow:0 6px 18px rgba(15,123,156,0.3);
+            position:relative; overflow:hidden;
+        }
+        .contact-form button:hover { background:var(--accent-hover); transform:translateY(-3px); box-shadow:0 12px 28px rgba(15,123,156,0.45); }
+        .contact-form button:active { transform:translateY(0) scale(.98); }
+
+        /* FOOTER */
+        .footer {
+            text-align:center; padding:2rem 0;
+            border-top:1px solid var(--border);
+            color:var(--text-muted); font-size:.85rem;
+            background:var(--white);
+        }
+
+        /* BACK TO TOP */
+        #back-to-top {
+            position:fixed; bottom:2rem; right:2rem;
+            width:44px; height:44px; border-radius:50%;
+            background:var(--accent); color:#fff; border:none; cursor:pointer;
+            font-size:1.2rem; display:flex; align-items:center; justify-content:center;
+            box-shadow:0 4px 16px rgba(15,123,156,0.4);
+            opacity:0; transform:translateY(16px) scale(0.8);
+            transition:opacity .35s var(--ease-out), transform .35s var(--ease-spring);
+            z-index:900;
+        }
+        #back-to-top.show { opacity:1; transform:translateY(0) scale(1); }
+        #back-to-top:hover { background:var(--accent-hover); transform:translateY(-3px) scale(1.08); }
+
+        /* RESPONSIVE */
+        @media(max-width:900px){
+            .hero-text h1 { font-size:2.2rem; }
+            .about-grid,.projects-grid,.contact-grid { grid-template-columns:1fr; }
+            .steps { grid-template-columns:1fr; }
+            .steps::before { display:none; }
+            .services-grid,.pricing-grid { grid-template-columns:1fr; max-width:450px; margin:0 auto; }
+        }
+        @media(max-width:768px){
+            .nav-links {
+                display:none; position:fixed; top:78px; left:1rem; right:1rem;
+                background:#fff; flex-direction:column; padding:1.5rem; gap:1rem;
+                border-radius:var(--radius-lg); box-shadow:var(--shadow-lg);
+                border:1px solid var(--border); z-index:999;
+                transform:translateY(-10px); opacity:0;
+                transition:opacity .3s var(--ease-out), transform .3s var(--ease-out);
+                pointer-events:none;
+            }
+            .nav-links.active {
+                display:flex; opacity:1; transform:translateY(0);
+                pointer-events:auto;
+            }
+            .menu-toggle { display:flex; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="scroll-progress"></div>
+    <button id="back-to-top" aria-label="Back to top">↑</button>
+    <a href="#main-content" class="skip-link" style="position:absolute;top:-100px;left:0;background:var(--accent);color:#fff;padding:8px 16px;z-index:10000;font-weight:600;text-decoration:none;border-radius:0 0 8px 0;">Skip to content</a>
+
+    <header class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">Ashraf <span>Ali</span></a>
+            <nav>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#projects">Work</a></li>
+                    <li><a href="#process">Process</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#contact" class="nav-cta">Let's Talk</a></li>
+                </ul>
+            </nav>
+            <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main id="main-content">
+
+        <section class="hero" id="home">
+            <div class="container">
+                <div class="hero-text">
+                    <div class="hero-badge"><span class="dot"></span> Front‑end developer you can rely on</div>
+                    <h1><b>I Create Premium Websites That Help Businesses Grow</b></h1>
+                    <p class="description">Modern, responsive, and high-performing websites tailored to strengthen your brand and attract more customers.</p>
+                    <div class="hero-buttons">
+                        <a href="#projects" class="btn-primary">See my work</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="trust-bar">
+            <div class="trust-item">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="2" width="18" height="16" rx="2" /><line x1="7" y1="22" x2="17" y2="22" /><line x1="12" y1="18" x2="12" y2="22" /></svg>
+                </span>
+                <strong>Responsive on all devices</strong>
+            </div>
+            <div class="trust-item">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+                </span>
+                <strong>Lightning‑fast loading</strong>
+            </div>
+            <div class="trust-item">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                </span>
+                <strong>Secure &amp; reliable</strong>
+            </div>
+            <div class="trust-item">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+                </span>
+                <strong>Clear communication</strong>
+            </div>
+            <div class="trust-item">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>
+                </span>
+                <strong>Pan‑India · Remote friendly</strong>
+            </div>
+        </div>
+
+        <section class="section" id="about">
+            <div class="container">
+                <div class="section-header">
+                    <p class="section-label reveal">About Me</p>
+                    <h2 class="section-title reveal">A developer who truly <em>cares</em></h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="about-grid">
+                    <div class="about-photo-placeholder reveal reveal-left" style="background-image:url('img2.jpeg'); background-size:cover; background-position:center; border:none;"></div>
+                    <div class="about-text reveal reveal-right">
+                        <p>Hi, I'm Ashraf Ali — a freelance front-end developer based in India, focused on creating modern websites that help businesses build trust and grow online. For me, a website isn't just about writing code — it's about creating a reliable, long-term digital presence for your business.</p>
+                        <p>I specialise in HTML, CSS, and JavaScript, building custom websites without relying on bloated page builders or generic templates. Every website I create is fast, responsive, and designed to provide a smooth user experience across all devices.</p>
+                        <p>I take the time to understand your goals, your audience, and what makes your business unique. The result is a website that not only looks professional but also strengthens your brand and builds trust with every visitor.</p>
+                        <div class="check-list">
+                            <div class="check-item">A beautiful, professional website designed for your business</div>
+                            <div class="check-item">Works perfectly on phones, tablets, and computers</div>
+                            <div class="check-item">Published live on the internet with a real link to share</div>
+                            <div class="check-item">Fast loading — visitors won't give up and leave</div>
+                            <div class="check-item">Unlimited revisions until you are 100% happy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-bg" id="projects">
+            <div class="container">
+                <div class="section-header">
+                    <p class="section-label reveal">Live project</p>
+                    <h2 class="section-title reveal">Real work, real results</h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="projects-grid">
+                    <div class="project-card reveal stagger-1">
+                        <div class="live-badge">LIVE</div>
+                        <img src="as.jpg" alt="Asar Arabic Academy website screenshot" class="project-img">
+                        <div class="project-body">
+                            <h3><i>AS Arabic Academy</i></h3>
+                            <p>Complete educational website with courses, pricing, enrolment form, and mobile‑friendly design.</p>
+                            <div class="project-tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Live</span></div>
+                            <a href="https://asarabicacademy-official.github.io/website/" target="_blank" rel="noopener" class="project-link">Visit website ↗</a>
+                        </div>
+                    </div>
+                    <div class="project-card cta-card reveal stagger-2">
+                        <div class="project-body" style="display:flex;flex-direction:column;justify-content:center;height:100%;">
+                            <h3 style="margin-bottom:.8rem;">Your website could be next</h3>
+                            <p>I'll craft a professional site that makes your business shine online.</p>
+                            <a href="#contact" class="project-link" style="color:var(--accent);">Discuss your project →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="process">
+            <div class="container">
+                <div class="section-header">
+                    <p class="section-label reveal">How I work</p>
+                    <h2 class="section-title reveal">A process that's <em>simple &amp; transparent</em></h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="steps">
+                    <div class="step reveal stagger-1"><div class="step-num">01</div><div class="step-title">We talk</div><p class="step-desc">You tell me about your business and what you need. No confusing forms — just a friendly conversation.</p></div>
+                    <div class="step reveal stagger-2"><div class="step-num">02</div><div class="step-title">I build</div><p class="step-desc">I write clean, efficient code and build the full website. You approve the design before launch.</p></div>
+                    <div class="step reveal stagger-3"><div class="step-num">03</div><div class="step-title">Go live</div><p class="step-desc">I publish your site online. You receive a complete, working website ready to impress your customers.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-bg" id="services">
+            <div class="container">
+                <div class="section-header">
+                    <p class="section-label reveal">Services</p>
+                    <h2 class="section-title reveal">What I Can Build <em>For You</em></h2>
+                    <p class="reveal" style="text-align:center;max-width:600px;margin:0 auto 1rem;color:var(--text-muted);">Professional websites designed to help your business look trustworthy, modern, and easy to contact online.</p>
+                    <p class="reveal" style="text-align:center;max-width:400px;margin:0 auto 3rem;color:var(--text-muted);font-size:.9rem;">Every website is custom-built — no bloated templates or page builders.</p>
+                </div>
+                <div class="services-grid">
+                    <div class="service-card reveal stagger-1"><h3>Business Websites</h3><div class="service-subtitle">For local businesses &amp; startups</div><p>Professional websites that help your business build trust and attract more customers online.</p></div>
+                    <div class="service-card reveal stagger-2"><h3>Landing Pages</h3><div class="service-subtitle">For promotions &amp; launches</div><p>High-converting single-page websites designed for promotions, courses, or product launches.</p></div>
+                    <div class="service-card reveal stagger-3"><h3>Portfolio Websites</h3><div class="service-subtitle">For freelancers &amp; creators</div><p>Clean personal portfolio websites for freelancers, creators, and professionals to showcase work.</p></div>
+                    <div class="service-card reveal stagger-4"><h3>Website Redesign</h3><div class="service-subtitle">For outdated sites</div><p>Transform outdated websites into modern, responsive, and professional experiences.</p></div>
+                    <div class="service-card reveal stagger-5"><h3>Website Support</h3><div class="service-subtitle">For ongoing maintenance</div><p>Ongoing updates, fixes, and improvements after your website goes live.</p></div>
+                    <div class="service-card reveal stagger-6"><h3>Premium Experience</h3><div class="service-subtitle">For brands that want the best</div><p>Custom websites with advanced UI, animations, and a truly unique digital presence.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="pricing">
+            <div class="container">
+                <div class="section-header">
+                    <p class="section-label reveal">Pricing</p>
+                    <h2 class="section-title reveal">Transparent <em>Investment</em></h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="pricing-grid">
+                    <div class="pricing-card reveal stagger-1">
+                        <div class="pricing-name">Starter Website</div>
+                        <p class="pricing-desc">A modern single-page website designed to help your business look professional and collect enquiries online.</p>
+                        <div class="pricing-price">₹2,999</div>
+                        <div class="pricing-label">Ideal for startups</div>
+                        <ul class="pricing-features">
+                            <li>Modern responsive design</li><li>Mobile optimized</li><li>Contact enquiry form</li><li>WhatsApp integration</li><li>Fast loading speed</li><li>Delivered in 1–1.5 weeks</li>
+                        </ul>
+                        <a href="#contact" class="btn-pricing">Start Your Project</a>
+                    </div>
+                    <div class="pricing-card reveal stagger-2">
+                        <div class="pricing-name">Business Website</div>
+                        <p class="pricing-desc">A complete professional business website built to strengthen your brand and build customer trust.</p>
+                        <div class="pricing-price">₹5,999</div>
+                        <div class="pricing-label">Great for small businesses</div>
+                        <ul class="pricing-features">
+                            <li>Up to 5 custom sections/pages</li><li>Premium modern UI</li><li>Contact &amp; enquiry system</li><li>WhatsApp integration</li><li>Mobile + tablet responsive</li><li>Performance optimization</li><li>Delivered in 2–4 weeks</li>
+                        </ul>
+                        <a href="#contact" class="btn-pricing">Let's Build It</a>
+                    </div>
+                    <div class="pricing-card reveal stagger-3" style="position:relative;">
+                        <div class="popular-badge">MOST POPULAR</div>
+                        <div class="pricing-name">Premium Website</div>
+                        <p class="pricing-desc">A fully custom premium website experience designed for businesses that want to stand out professionally online.</p>
+                        <div class="pricing-price">₹9,999+</div>
+                        <div class="pricing-label">Best for professional brands</div>
+                        <ul class="pricing-features">
+                            <li>Fully custom business website</li><li>Advanced animations</li><li>Premium UI design</li><li>Multiple pages</li><li>Custom sections</li><li>Priority support</li><li>Premium responsive experience</li>
+                        </ul>
+                        <a href="#contact" class="btn-pricing">Get Premium</a>
+                    </div>
+                </div>
+                <div class="pricing-note reveal">
+                    <p>Every website is personalised for your brand, optimised for all devices, and built for long-term reliability.</p>
+                </div>
+                <div class="quote-section reveal">
+                    <p class="quote-text">"A good website is no longer a luxury — it is the first thing people check before they trust a business. Let me make sure yours leaves the right impression."</p>
+                    <p class="quote-attribution">— Ashraf Ali · Freelance Website Developer</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-bg" id="faq">
+            <div class="container">
+                <div class="section-header">
+                    <p class="section-label reveal">FAQ</p>
+                    <h2 class="section-title reveal">Common questions</h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="faq-accordion reveal">
+                    <div class="faq-item"><button class="faq-question">How long does a website take? <span class="faq-icon">+</span></button><div class="faq-answer">Simple landing pages 3–5 days. More advanced sites 1–3 weeks, depending on features.</div></div>
+                    <div class="faq-item"><button class="faq-question">What technology do you use? <span class="faq-icon">+</span></button><div class="faq-answer">I work with HTML, CSS, and JavaScript — the foundation of the web.</div></div>
+                    <div class="faq-item"><button class="faq-question">Will it work on mobile? <span class="faq-icon">+</span></button><div class="faq-answer">Absolutely. Every site I build is fully responsive and tested on multiple devices.</div></div>
+                    <div class="faq-item"><button class="faq-question">Why custom over templates? <span class="faq-icon">+</span></button><div class="faq-answer">A custom site gives you complete control, better performance, and a truly unique brand presence.</div></div>
+                    <div class="faq-item"><button class="faq-question">Do you provide support after launch? <span class="faq-icon">+</span></button><div class="faq-answer">Yes, ongoing support for updates, small changes, and maintenance (fees may apply).</div></div>
+                    <div class="faq-item"><button class="faq-question">How do we start? <span class="faq-icon">+</span></button><div class="faq-answer">Simply fill out the contact form or message me on WhatsApp. We'll schedule a relaxed chat.</div></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="contact">
+            <div class="container">
+                <div class="section-header">
+                    <p class="section-label reveal">Get in touch</p>
+                    <h2 class="section-title reveal">Let's begin <em>your project</em></h2>
+                    <div class="section-line"></div>
+                </div>
+                <div class="contact-grid">
+                    <div class="contact-info reveal reveal-left">
+                        <h3>Ready to have a website that builds trust?</h3>
+                        <div class="c-link">
+                            <div class="c-link-inner"><span class="c-label">Email</span><span class="c-val">ashrafali.developer@gmail.com</span></div>
+                        </div>
+                        <a href="https://asarabicacademy-official.github.io/website/" target="_blank" rel="noopener" class="c-link">
+                            <span class="c-link-inner"><span class="c-label">Live example</span><span class="c-val">AS Arabic Academy</span></span>
+                            <span style="color:var(--accent);">↗</span>
+                        </a>
+                    </div>
+                    <form class="contact-form reveal reveal-right" id="contactForm"
+                          action="https://formsubmit.co/b57336a9e50a7d67227ab0d7ccfc9449"
+                          method="POST">
+
+                        <!-- Redirect after successful submission -->
+                        <input type="hidden" name="_next" value="https://yourwebsite.com/thank-you.html">
+                        <!-- Custom subject line -->
+                        <input type="hidden" name="_subject" value="New enquiry from your portfolio website">
+
+                        <div class="form-group">
+                            <label for="name">Your name</label>
+                            <input type="text" name="name" id="name" placeholder="Enter Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" name="email" id="email" placeholder="youremail@gmail.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subject">Project Type</label>
+                            <input type="text" name="subject" id="subject" placeholder="e.g. Website for my restaurant">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Tell Me About Your Project</label>
+                            <textarea name="message" id="message" placeholder="Describe your business, goals, and the type of website you need..."></textarea>
+                        </div>
+                        <button type="submit">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container"><p>© 2026 Ashraf Ali. Freelance front‑end web developer. Pan India.</p></div>
+    </footer>
+
+    <script>
+        const progressBar = document.getElementById('scroll-progress');
+        const navbar      = document.getElementById('navbar');
+        const backToTop   = document.getElementById('back-to-top');
+
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const total    = document.documentElement.scrollHeight - window.innerHeight;
+            progressBar.style.width = (scrolled / total * 100) + '%';
+            navbar.classList.toggle('scrolled', scrolled > 40);
+            backToTop.classList.toggle('show', scrolled > 400);
+            document.querySelectorAll('section[id], div.trust-bar').forEach(sec => {
+                const rect = sec.getBoundingClientRect();
+                if (rect.top <= 100 && rect.bottom >= 100) {
+                    document.querySelectorAll('.nav-links a').forEach(a => {
+                        a.classList.toggle('active', a.getAttribute('href') === '#' + sec.id);
+                    });
+                }
+            });
+        }, { passive: true });
+
+        backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks   = document.getElementById('navLinks');
+        menuToggle.addEventListener('click', () => {
+            const open = navLinks.classList.toggle('active');
+            menuToggle.classList.toggle('open', open);
+            menuToggle.setAttribute('aria-expanded', open);
+        });
+        function closeMenu() {
+            navLinks.classList.remove('active');
+            menuToggle.classList.remove('open');
+            menuToggle.setAttribute('aria-expanded', 'false');
+        }
+        document.addEventListener('click', e => {
+            if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) closeMenu();
+        });
+        navLinks.querySelectorAll('a').forEach(l => l.addEventListener('click', closeMenu));
+
+        const revealObs = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('visible');
+                const line = entry.target.closest('.section-header')?.querySelector('.section-line');
+                if (line) line.classList.add('line-in');
+                revealObs.unobserve(entry.target);
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.reveal').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('visible');
+            });
+            document.querySelectorAll('.section-line').forEach(line => {
+                if (line.getBoundingClientRect().top < window.innerHeight) line.classList.add('line-in');
+            });
+        });
+
+        const lineObs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('line-in'); lineObs.unobserve(e.target); } });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('.section-line').forEach(l => lineObs.observe(l));
+
+        const checkObs = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.querySelectorAll('.check-item').forEach((item, i) => {
+                    setTimeout(() => item.classList.add('item-in'), i * 100);
+                });
+                checkObs.unobserve(entry.target);
+            });
+        }, { threshold: 0.3 });
+        const checkList = document.querySelector('.check-list');
+        if (checkList) checkObs.observe(checkList);
+
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item   = btn.parentElement;
+                const isOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+                if (!isOpen) item.classList.add('open');
+            });
+        });
+
+        const hero = document.querySelector('.hero');
+        for (let i = 0; i < 14; i++) {
+            const p = document.createElement('div');
+            p.className = 'hero-particle';
+            const size = Math.random() * 60 + 20;
+            p.style.cssText = `
+                width:${size}px; height:${size}px;
+                left:${Math.random() * 100}%;
+                animation-duration:${Math.random() * 12 + 8}s;
+                animation-delay:${Math.random() * 8}s;
+            `;
+            hero.appendChild(p);
+        }
+
+        document.querySelectorAll('.pricing-card, .service-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width  - 0.5;
+                const y = (e.clientY - rect.top)  / rect.height - 0.5;
+                card.style.transform = `translateY(-8px) scale(1.01) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+    </script>
+</body>
+</html>
