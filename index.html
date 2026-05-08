@@ -524,9 +524,29 @@
             transition:transform .35s var(--ease-spring), box-shadow .35s var(--ease-out), background .2s;
             box-shadow:0 6px 18px rgba(15,123,156,0.3);
             position:relative; overflow:hidden;
+            margin-bottom: 0.8rem;
         }
         .contact-form button:hover { background:var(--accent-hover); transform:translateY(-3px); box-shadow:0 12px 28px rgba(15,123,156,0.45); }
         .contact-form button:active { transform:translateY(0) scale(.98); }
+
+        /* Success message */
+        .form-success-msg {
+            display: none;
+            background: #e6f7ee;
+            border: 1px solid #4caf93;
+            color: #0d4d3b;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: center;
+            margin-top: 1rem;
+            animation: fadeSlide 0.4s ease-out;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         /* FOOTER */
         .footer {
@@ -750,7 +770,7 @@
                     <div class="pricing-card reveal stagger-1">
                         <div class="pricing-name">Starter Website</div>
                         <p class="pricing-desc">A modern single-page website designed to help your business look professional and collect enquiries online.</p>
-                        <div class="pricing-price">₹2,999</div>
+                        <div class="pricing-price">₹3,899</div>
                         <div class="pricing-label">Ideal for startups</div>
                         <ul class="pricing-features">
                             <li>Modern responsive design</li><li>Mobile optimized</li><li>Contact enquiry form</li><li>WhatsApp integration</li><li>Fast loading speed</li><li>Delivered in 1–1.5 weeks</li>
@@ -760,7 +780,7 @@
                     <div class="pricing-card reveal stagger-2">
                         <div class="pricing-name">Business Website</div>
                         <p class="pricing-desc">A complete professional business website built to strengthen your brand and build customer trust.</p>
-                        <div class="pricing-price">₹5,999</div>
+                        <div class="pricing-price">₹7,799</div>
                         <div class="pricing-label">Great for small businesses</div>
                         <ul class="pricing-features">
                             <li>Up to 5 custom sections/pages</li><li>Premium modern UI</li><li>Contact &amp; enquiry system</li><li>WhatsApp integration</li><li>Mobile + tablet responsive</li><li>Performance optimization</li><li>Delivered in 2–4 weeks</li>
@@ -817,9 +837,10 @@
                 <div class="contact-grid">
                     <div class="contact-info reveal reveal-left">
                         <h3>Ready to have a website that builds trust?</h3>
-                        <div class="c-link">
+                        <a href="mailto:ashrafali.developer@gmail.com" class="c-link" style="color:inherit; text-decoration:none;">
                             <div class="c-link-inner"><span class="c-label">Email</span><span class="c-val">ashrafali.developer@gmail.com</span></div>
-                        </div>
+                            <span style="color:var(--accent);">↗</span>
+                        </a>
                         <a href="https://asarabicacademy-official.github.io/website/" target="_blank" rel="noopener" class="c-link">
                             <span class="c-link-inner"><span class="c-label">Live example</span><span class="c-val">AS Arabic Academy</span></span>
                             <span style="color:var(--accent);">↗</span>
@@ -829,9 +850,7 @@
                           action="https://formsubmit.co/b57336a9e50a7d67227ab0d7ccfc9449"
                           method="POST">
 
-                        <!-- Redirect after successful submission -->
-                        <input type="hidden" name="_next" value="https://yourwebsite.com/thank-you.html">
-                        <!-- Custom subject line -->
+                        <!-- Custom subject line (kept, but won't redirect) -->
                         <input type="hidden" name="_subject" value="New enquiry from your portfolio website">
 
                         <div class="form-group">
@@ -843,6 +862,10 @@
                             <input type="email" name="email" id="email" placeholder="youremail@gmail.com" required>
                         </div>
                         <div class="form-group">
+                            <label for="whatsapp">WhatsApp Number</label>
+                            <input type="tel" name="whatsapp" id="whatsapp" placeholder="+91 98765 43210">
+                        </div>
+                        <div class="form-group">
                             <label for="subject">Project Type</label>
                             <input type="text" name="subject" id="subject" placeholder="e.g. Website for my restaurant">
                         </div>
@@ -851,6 +874,7 @@
                             <textarea name="message" id="message" placeholder="Describe your business, goals, and the type of website you need..."></textarea>
                         </div>
                         <button type="submit">Send Message</button>
+                        <div id="formSuccessMsg" class="form-success-msg">✓ Successful submit. We will reach you.</div>
                     </form>
                 </div>
             </div>
@@ -972,6 +996,39 @@
             card.addEventListener('mouseleave', () => {
                 card.style.transform = '';
             });
+        });
+
+        /* ─────────────────────────────────────────────
+           FORM SUBMISSION – SHOW SUCCESS MESSAGE
+        ───────────────────────────────────────────── */
+        const contactForm = document.getElementById('contactForm');
+        const successMsg  = document.getElementById('formSuccessMsg');
+
+        contactForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(contactForm);
+
+            try {
+                const response = await fetch(contactForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (response.ok) {
+                    // Show success message
+                    successMsg.style.display = 'block';
+                    contactForm.reset();
+                    // Hide message after 6 seconds
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 6000);
+                } else {
+                    alert('Something went wrong. Please try again or email me directly.');
+                }
+            } catch (error) {
+                alert('Network error. Please check your connection and try again.');
+            }
         });
     </script>
 </body>
